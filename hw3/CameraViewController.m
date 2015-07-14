@@ -8,6 +8,7 @@
 
 #import "CameraViewController.h"
 #import "PlayerView.h"
+#import "ComposeVideoViewController.h"
 
 @import Accounts;
 @import MediaPlayer;
@@ -27,8 +28,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *videoStopButton;
 @property (weak, nonatomic) IBOutlet UIButton *photoActionButton;
 @property (weak, nonatomic) IBOutlet UIButton *saveImageButton;
-@property (weak, nonatomic) IBOutlet UIButton *discardImageButton;
-@property (weak, nonatomic) IBOutlet UIButton *videoDoneButton;
+@property (weak, nonatomic) IBOutlet UIButton *discardButton;
+@property (weak, nonatomic) IBOutlet UIButton *videoSaveButton;
+@property (weak, nonatomic) IBOutlet UIButton *tweetButton;
 
 @property (nonatomic, strong) AVCaptureSession *session;
 @property (nonatomic, strong) NSOperationQueue *captureSessionQueue;
@@ -40,6 +42,7 @@
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) NSURL *outputFileURL;
+@property (nonatomic, strong) NSData *videoData;
 @property (nonatomic, strong) NSString *textString;
 @property BOOL isImage;
 @property UIBackgroundTaskIdentifier backgroundRecordingID;
@@ -145,8 +148,9 @@
     self.videoStopButton.hidden = YES;
     self.photoActionButton.hidden = NO;
     self.saveImageButton.hidden = YES;
-    self.discardImageButton.hidden = YES;
-    self.videoDoneButton.hidden = YES;
+    self.discardButton.hidden = YES;
+    self.videoSaveButton.hidden = YES;
+    self.tweetButton.hidden = YES;
     self.title = @"Take a Photo";
 }
 
@@ -157,8 +161,9 @@
     self.videoStopButton.hidden = YES;
     self.photoActionButton.hidden = YES;
     self.saveImageButton.hidden = YES;
-    self.discardImageButton.hidden = YES;
-    self.videoDoneButton.hidden = YES;
+    self.discardButton.hidden = YES;
+    self.videoSaveButton.hidden = YES;
+    self.tweetButton.hidden = YES;
     self.title = @"Record a video";
 }
 
@@ -169,8 +174,9 @@
     self.videoStopButton.hidden = YES;
     self.photoActionButton.hidden = YES;
     self.saveImageButton.hidden = NO;
-    self.discardImageButton.hidden = NO;
-    self.videoDoneButton.hidden = YES;
+    self.discardButton.hidden = NO;
+    self.tweetButton.hidden = NO;
+    self.videoSaveButton.hidden = YES;
 }
 
 - (void)videoPreviewMode {
@@ -180,8 +186,9 @@
     self.videoStopButton.hidden = YES;
     self.photoActionButton.hidden = YES;
     self.saveImageButton.hidden = YES;
-    self.discardImageButton.hidden = YES;
-    self.videoDoneButton.hidden = NO;
+    self.discardButton.hidden = NO;
+    self.tweetButton.hidden = NO;
+    self.videoSaveButton.hidden = NO;
 }
 
 - (NSString *)getBasicInfo {
@@ -250,11 +257,6 @@
 - (IBAction)videoStartButtonDidPushed:(id)sender {
     [self.captureSessionQueue addOperationWithBlock:^{
         if ( [UIDevice currentDevice].isMultitaskingSupported ) {
-            // Setup background task. This is needed because the -[captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
-            // callback is not received until AVCam returns to the foreground unless you request background execution time.
-            // This also ensures that there will be time to write the file to the photo library when AVCam is backgrounded.
-            // To conclude this background execution, -endBackgroundTask is called in
-            // -[captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:] after the recorded file has been saved.
             self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
         }
         
@@ -294,13 +296,20 @@
 }
 
 - (IBAction)discardImage:(id)sender {
-    [UIView animateWithDuration:0.5 animations:^{
-        self.imageView.alpha = 0;
-    }];
-    [self cameraMode];
+    if (self.isImage){
+        [UIView animateWithDuration:0.5 animations:^{
+            self.imageView.alpha = 0;
+        }];
+        [self cameraMode];
+    } else {
+        [UIView animateWithDuration:0.5 animations:^{
+            self.playerView.alpha = 0;
+        }];
+        [self cameraMode];
+    }
 }
 
-- (IBAction)doneWithVideo:(id)sender {
+- (IBAction)saveVideo:(id)sender {
     [UIView animateWithDuration:0.5 animations:^{
         self.playerView.alpha = 0;
     }];
@@ -309,21 +318,7 @@
         if ( status == PHAuthorizationStatusAuthorized ) {
             // Save the movie file to the photo library and cleanup.
             [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-                // In iOS 9 and later, it's possible to move the file into the photo library without duplicating the file data.
-                // This avoids using double the disk space during save, which can make a difference on devices with limited free disk space.
-                
-                //iOS9 code
-                /*
-                 if ( [PHAssetResourceCreationOptions class] ) {
-                 PHAssetResourceCreationOptions *options = [[PHAssetResourceCreationOptions alloc] init];
-                 options.shouldMoveFile = YES;
-                 PHAssetCreationRequest *changeRequest = [PHAssetCreationRequest creationRequestForAsset];
-                 [changeRequest addResourceWithType:PHAssetResourceTypeVideo fileURL:outputFileURL options:options];
-                 }
-                 */
-                //else {
                 [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:self.outputFileURL];
-                //}
             } completionHandler:^( BOOL success, NSError *error ) {
                 if ( ! success ) {
                     NSLog( @"Could not save movie to photo library: %@", error );
@@ -370,9 +365,10 @@
             [alertView show];
         }
     } else {
-        [self performSegueWithIdentifier:@"ToCustomComposeView" sender:nil];
+        [self performSegueWithIdentifier:@"CustomSegueToComposeView" sender:nil];
     }
 }
+
 
 #pragma mark File Output Delegate
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error {
@@ -408,5 +404,21 @@
     }
 }
 
+#pragma mark Navigation
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"CustomSegueToComposeView"]) {
+        ComposeVideoViewController *destinationController = segue.destinationViewController;
+        
+        destinationController.outputFileURL = self.outputFileURL;
+        destinationController.string = [self getBasicInfo];
+    }
+}
+
+-(IBAction)prepareForUnwind:(UIStoryboardSegue *)segue {
+    if ([segue.identifier isEqualToString:@"UnwindToCameraViewController"]) {
+        //ComposeVideoViewController *controller = (ComposeVideoViewController *)segue.sourceViewController;
+        NSLog(@"%@", segue.identifier);
+    }
+}
 
 @end

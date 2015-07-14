@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8152.3" systemVersion="15A216g" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -30,8 +29,8 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qpI-32-FU7">
-                                <rect key="frame" x="536" y="28" width="44" height="48"/>
+                            <button opaque="NO" contentMode="scaleAspectFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qpI-32-FU7">
+                                <rect key="frame" x="540" y="28" width="44" height="48"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="7P5-WO-6fV"/>
@@ -45,7 +44,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o2L-Lt-NoO">
-                                <rect key="frame" x="498" y="500" width="40" height="30"/>
+                                <rect key="frame" x="499" y="500" width="39" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Video">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -104,7 +103,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I5j-Jw-k4V">
-                                <rect key="frame" x="476" y="452" width="84" height="30"/>
+                                <rect key="frame" x="477" y="452" width="83" height="30"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Save Image">
@@ -114,19 +113,19 @@
                                     <action selector="saveImage:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="Wah-De-Utj"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b4n-2A-0Fs">
-                                <rect key="frame" x="521" y="452" width="39" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b4n-2A-0Fs" userLabel="Save Video">
+                                <rect key="frame" x="481" y="452" width="79" height="30"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Done">
+                                <state key="normal" title="Save Video">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="doneWithVideo:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="tbb-PA-ARX"/>
+                                    <action selector="saveVideo:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="2IJ-tv-piQ"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jON-Un-gDJ">
-                                <rect key="frame" x="279" y="452" width="42" height="30"/>
+                                <rect key="frame" x="280" y="452" width="40" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Tweet">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -183,17 +182,18 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="cameraButton" destination="a4G-wK-B2D" id="9FS-hX-u5j"/>
-                        <outlet property="discardImageButton" destination="wbg-G6-OMG" id="4AX-Oq-aqE"/>
+                        <outlet property="discardButton" destination="wbg-G6-OMG" id="blp-F0-vWI"/>
                         <outlet property="imageView" destination="v0p-Vh-wcb" id="wJh-0s-BxL"/>
                         <outlet property="photoActionButton" destination="jwM-6f-t0F" id="AhS-jQ-vtw"/>
                         <outlet property="playerView" destination="0ba-CZ-v1z" id="Qy2-0L-yLV"/>
                         <outlet property="saveImageButton" destination="I5j-Jw-k4V" id="pDZ-bM-Wfk"/>
                         <outlet property="swapCamButton" destination="qpI-32-FU7" id="Vne-it-URb"/>
+                        <outlet property="tweetButton" destination="jON-Un-gDJ" id="g1e-s2-k2i"/>
                         <outlet property="videoButton" destination="o2L-Lt-NoO" id="mNv-Pq-8S8"/>
-                        <outlet property="videoDoneButton" destination="b4n-2A-0Fs" id="Mey-ig-5E5"/>
+                        <outlet property="videoSaveButton" destination="b4n-2A-0Fs" id="6Qd-xa-F7K"/>
                         <outlet property="videoStartButton" destination="yLp-oy-AVl" id="tWW-OF-jQy"/>
                         <outlet property="videoStopButton" destination="15u-2c-3Bv" id="LdH-Re-nuh"/>
-                        <segue destination="IbZ-Xx-pCX" kind="presentation" identifier="ToCustomComposeView" id="ud1-AS-77k"/>
+                        <segue destination="IbZ-Xx-pCX" kind="presentation" identifier="CustomSegueToComposeView" id="ud1-AS-77k"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
@@ -201,10 +201,10 @@
             </objects>
             <point key="canvasLocation" x="1542" y="434"/>
         </scene>
-        <!--View Controller-->
+        <!--Compose Video View Controller-->
         <scene sceneID="egL-1v-Qu4">
             <objects>
-                <viewController id="IbZ-Xx-pCX" sceneMemberID="viewController">
+                <viewController id="IbZ-Xx-pCX" customClass="ComposeVideoViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Ir6-2z-vPd"/>
                         <viewControllerLayoutGuide type="bottom" id="JNq-SO-AEf"/>
@@ -224,37 +224,59 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2b2-rA-mRW">
-                                <rect key="frame" x="16" y="550" width="280" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ubI-BI-0zf">
+                                <rect key="frame" x="304" y="550" width="280" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Post">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="postVideoTweet:" destination="IbZ-Xx-pCX" eventType="touchUpInside" id="004-Yf-rDP"/>
+                                </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ubI-BI-0zf">
-                                <rect key="frame" x="304" y="550" width="280" height="30"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YZl-Gw-2lk" customClass="PlayerView">
+                                <rect key="frame" x="16" y="148" width="568" height="379"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2b2-rA-mRW">
+                                <rect key="frame" x="16" y="550" width="280" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Cancel">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <segue destination="5QP-NO-KzQ" kind="unwind" identifier="UnwindToCameraViewController" unwindAction="prepareForUnwind:" id="Dgr-Z6-VvG"/>
+                                </connections>
                             </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="ubI-BI-0zf" firstAttribute="top" secondItem="YZl-Gw-2lk" secondAttribute="bottom" constant="23" id="1Zf-ag-sgM"/>
                             <constraint firstItem="aYp-cV-5Du" firstAttribute="leading" secondItem="QIH-j4-iJc" secondAttribute="leading" id="8RC-eB-WK0"/>
                             <constraint firstItem="aYp-cV-5Du" firstAttribute="top" secondItem="Ir6-2z-vPd" secondAttribute="bottom" id="Bjt-5P-gW5"/>
                             <constraint firstItem="2b2-rA-mRW" firstAttribute="leading" secondItem="QIH-j4-iJc" secondAttribute="leading" constant="16" id="Di0-3B-l2c"/>
                             <constraint firstAttribute="trailing" secondItem="ubI-BI-0zf" secondAttribute="trailing" constant="16" id="GzP-cn-JWq"/>
                             <constraint firstItem="JNq-SO-AEf" firstAttribute="top" secondItem="2b2-rA-mRW" secondAttribute="bottom" constant="20" id="Ohc-Ze-vW0"/>
                             <constraint firstItem="ubI-BI-0zf" firstAttribute="width" secondItem="2b2-rA-mRW" secondAttribute="width" id="R09-tq-FNZ"/>
+                            <constraint firstItem="YZl-Gw-2lk" firstAttribute="leading" secondItem="QIH-j4-iJc" secondAttribute="leading" constant="16" id="Rem-eg-KJI"/>
+                            <constraint firstItem="YZl-Gw-2lk" firstAttribute="top" secondItem="aYp-cV-5Du" secondAttribute="bottom" constant="8" id="bWr-Dl-zE5"/>
                             <constraint firstItem="ubI-BI-0zf" firstAttribute="leading" secondItem="2b2-rA-mRW" secondAttribute="trailing" constant="8" id="bXV-74-Y8v"/>
                             <constraint firstItem="JNq-SO-AEf" firstAttribute="top" secondItem="ubI-BI-0zf" secondAttribute="bottom" constant="20" id="fyf-rq-az9"/>
                             <constraint firstAttribute="trailing" secondItem="aYp-cV-5Du" secondAttribute="trailing" id="noT-J6-y4r"/>
+                            <constraint firstAttribute="trailing" secondItem="YZl-Gw-2lk" secondAttribute="trailing" constant="16" id="nyG-ZL-ZNW"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="cancelButton" destination="2b2-rA-mRW" id="eCq-n3-0Gi"/>
+                        <outlet property="playerView" destination="YZl-Gw-2lk" id="88j-uG-NMl"/>
+                        <outlet property="postButton" destination="ubI-BI-0zf" id="pHl-6Q-CyL"/>
+                        <outlet property="textView" destination="aYp-cV-5Du" id="t7j-PY-LyU"/>
+                        <segue destination="5QP-NO-KzQ" kind="unwind" unwindAction="prepareForUnwind:" id="kk8-IW-kWP"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yps-7L-CA5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="5QP-NO-KzQ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2227" y="434"/>
         </scene>
@@ -336,7 +358,7 @@
                                 <animations/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eE3-ru-iKN">
-                                <rect key="frame" x="16" y="513" width="58" height="30"/>
+                                <rect key="frame" x="16" y="513" width="59" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Play" image="ic_play_circle_filled">
                                     <color key="titleColor" red="0.23865328120000001" green="0.29360702449999998" blue="0.65376420449999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -352,7 +374,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zZa-QS-2UY">
-                                <rect key="frame" x="98" y="513" width="488" height="31"/>
+                                <rect key="frame" x="99" y="513" width="487" height="31"/>
                                 <animations/>
                                 <connections>
                                     <action selector="videoSlierChangeValue:" destination="U8H-Tv-EVq" eventType="valueChanged" id="bth-ci-AIW"/>
@@ -360,7 +382,7 @@
                                 </connections>
                             </slider>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="it3-SU-isR">
-                                <rect key="frame" x="12" y="516" width="74" height="24"/>
+                                <rect key="frame" x="12" y="516" width="75" height="24"/>
                                 <animations/>
                                 <state key="normal" title="Pause" image="ic_pause_circle_filled">
                                     <color key="titleColor" red="0.23865328120000001" green="0.29360702449999998" blue="0.65376420449999995" alpha="1" colorSpace="calibratedRGB"/>
