@@ -24,6 +24,10 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // Set dynamic row height
+    self.tableView.estimatedRowHeight = 210;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     
@@ -51,6 +55,9 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
                             id JSONResponse = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
                             if ([JSONResponse isKindOfClass:[NSArray class]]) {
                                 self.tweets = JSONResponse;
+                                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                    [self.tableView reloadData];
+                                }];
                             }
                         }
                         else {
@@ -99,7 +106,7 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TWFeedTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NewsFeedCell" forIndexPath:indexPath];
+    TWFeedTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NewsFeedCell"];
     
     // Find tweet
     NSDictionary *tweetDict = self.tweets[indexPath.row];
@@ -111,14 +118,9 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
     } else NSLog(@"No user dictorory.");
     
     cell.timeLabel.text = tweetDict[@"create_at"];
-    
-    // Display user porfile image
-    NSString *url = @"http://pbs.twimg.com/profile_images/568008801106665472/XR0uQQ7B_normal.jpeg";
-//    NSString *profileImageURL = tweetDict[@"user"][@"profile_image_url"];
-    NSLog(@"Profile image url: %@", url);
-    cell.userImageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:url]]];
-    cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:url]]];
+
     cell.playerView.hidden = YES;
+    
     return cell;
 }
 
