@@ -105,8 +105,20 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
     NSDictionary *tweetDict = self.tweets[indexPath.row];
     
     // Configure the cell...
-    cell.screenNameLabel.text = tweetDict[@"user"][@"screen_name"];
+    if (tweetDict[@"user"]) {
+        cell.screenNameLabel.text = tweetDict[@"user"][@"screen_name"];
+        cell.nameLabel.text = tweetDict[@"user"][@"name"];
+    } else NSLog(@"No user dictorory.");
     
+    cell.timeLabel.text = tweetDict[@"create_at"];
+    
+    // Display user porfile image
+    NSString *url = @"http://pbs.twimg.com/profile_images/568008801106665472/XR0uQQ7B_normal.jpeg";
+//    NSString *profileImageURL = tweetDict[@"user"][@"profile_image_url"];
+    NSLog(@"Profile image url: %@", url);
+    cell.userImageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:url]]];
+    cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:url]]];
+    cell.playerView.hidden = YES;
     return cell;
 }
 

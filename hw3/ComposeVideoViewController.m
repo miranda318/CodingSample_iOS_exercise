@@ -118,7 +118,7 @@
     SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodPOST URL:twitterPostURL parameters:postParams];
     request.account = account;
     [request performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-        NSLog(@"HTTP Response: %td, responseData: %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        NSLog(@"Stage 1 HTTP Response: %td, responseData: %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (error) {
             NSLog(@"There was an error:%@", [error localizedDescription]);
         } else {
@@ -150,6 +150,7 @@
         NSLog(@"Stage2 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (!error) {
             [self tweetVideoStage3:videoData mediaID:mediaID account:account withCompletion:completion];
+            NSLog(@"Stage 2 succeed.");
         }
         else {
             NSLog(@"Error stage 2 - %@", error);
@@ -174,6 +175,8 @@
             NSLog(@"Error stage 3 - %@", error);
         } else {
             [self tweetVideoStage4:videoData mediaID:mediaID account:account withCompletion:completion];
+            NSLog(@"Stage 3 succeed.");
+
         }
     }];
 }
