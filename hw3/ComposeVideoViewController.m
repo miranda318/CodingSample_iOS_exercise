@@ -75,7 +75,7 @@
             {
                 ACAccount *twitterAccount = [accounts objectAtIndex:0];
 
-                NSData *videoData = [NSData dataWithContentsOfFile:self.outputFileURL.path];
+                NSData *videoData = [NSData dataWithContentsOfURL:self.outputFileURL];
                 [self uploadTwitterVideo:videoData account:twitterAccount withCompletion:^{
                     [self completion];
                 }];
@@ -118,7 +118,7 @@
     SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodPOST URL:twitterPostURL parameters:postParams];
     request.account = account;
     [request performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-        NSLog(@"HTTP Response: %li, responseData: %@", (long)[urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        NSLog(@"HTTP Response: %td, responseData: %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (error) {
             NSLog(@"There was an error:%@", [error localizedDescription]);
         } else {
@@ -138,16 +138,16 @@
     NSURL *twitterPostURL = [[NSURL alloc] initWithString:@"https://upload.twitter.com/1.1/media/upload.json"];
     NSDictionary *postParams = @{@"command": @"APPEND",
                                  @"media_id" : mediaID,
-                                 @"media_data": videoData,
+                                 @"media_data": [videoData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength],
                                  @"segment_index" : @"0",
                                  };
     
     SLRequest *postRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodPOST URL:twitterPostURL parameters:postParams];
     postRequest.account = account;
     
-    [postRequest addMultipartData:videoData withName:@"media" type:@"video/mp4" filename:@"video"];
+//    [postRequest addMultipartData:videoData withName:@"media" type:@"video/mp4" filename:@"video"];
     [postRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-        NSLog(@"Stage2 HTTP Response: %li, %@", (long)[urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        NSLog(@"Stage2 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (!error) {
             [self tweetVideoStage3:videoData mediaID:mediaID account:account withCompletion:completion];
         }
@@ -169,7 +169,7 @@
     // Set the account and begin the request.
     postRequest.account = account;
     [postRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-        NSLog(@"Stage3 HTTP Response: %li, %@", (long)[urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        NSLog(@"Stage3 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (error) {
             NSLog(@"Error stage 3 - %@", error);
         } else {
@@ -180,22 +180,20 @@
 
 - (void)tweetVideoStage4:(NSData*)videoData mediaID:(NSString *)mediaID account:(ACAccount*)account withCompletion:(dispatch_block_t)completion{
     NSURL *twitterPostURL = [[NSURL alloc] initWithString:@"https://api.twitter.com/1.1/statuses/update.json"];
-    NSString *statusContent = [NSString stringWithFormat:@"#SocialVideoHelper# https://github.com/liu044100/SocialVideoHelper"];
     
     // Set the parameters for the third twitter video request.
-    NSDictionary *postParams = @{@"status": statusContent,
+    NSDictionary *postParams = @{@"status": self.string,
                                  @"media_ids" : @[mediaID]};
     
     SLRequest *postRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodPOST URL:twitterPostURL parameters:postParams];
     postRequest.account = account;
     [postRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-        NSLog(@"Stage4 HTTP Response: %li, %@", (long)[urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        NSLog(@"Stage4 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (error) {
             NSLog(@"Error stage 4 - %@", error);
         } else {
             if ([urlResponse statusCode] == 200){
                 NSLog(@"upload success !");
-                //DispatchMainThread(^(){completion();});
             }
         }
     }];

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B935D64F1B55E00C006B8016 /* ReadTimelineTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B935D64E1B55E00C006B8016 /* ReadTimelineTableViewController.m */; };
-		B935D6551B55EA17006B8016 /* TWFeedCellTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B935D6541B55EA17006B8016 /* TWFeedCellTableViewCell.m */; };
+		B935D6551B55EA17006B8016 /* TWFeedTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B935D6541B55EA17006B8016 /* TWFeedTableViewCell.m */; };
 		B95B930D1B543AC6009D2BCF /* ComposeVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B95B930C1B543AC6009D2BCF /* ComposeVideoViewController.m */; };
 		B96385031B4482AE00A22E9B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B96385021B4482AE00A22E9B /* main.m */; };
 		B96385061B4482AE00A22E9B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B96385051B4482AE00A22E9B /* AppDelegate.m */; };
@@ -38,8 +38,8 @@
 /* Begin PBXFileReference section */
 		B935D64D1B55E00C006B8016 /* ReadTimelineTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadTimelineTableViewController.h; sourceTree = "<group>"; };
 		B935D64E1B55E00C006B8016 /* ReadTimelineTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReadTimelineTableViewController.m; sourceTree = "<group>"; };
-		B935D6531B55EA17006B8016 /* TWFeedCellTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWFeedCellTableViewCell.h; sourceTree = "<group>"; };
-		B935D6541B55EA17006B8016 /* TWFeedCellTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFeedCellTableViewCell.m; sourceTree = "<group>"; };
+		B935D6531B55EA17006B8016 /* TWFeedTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWFeedTableViewCell.h; sourceTree = "<group>"; };
+		B935D6541B55EA17006B8016 /* TWFeedTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFeedTableViewCell.m; sourceTree = "<group>"; };
 		B95B930B1B543AC6009D2BCF /* ComposeVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposeVideoViewController.h; sourceTree = "<group>"; };
 		B95B930C1B543AC6009D2BCF /* ComposeVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComposeVideoViewController.m; sourceTree = "<group>"; };
 		B96384FD1B4482AD00A22E9B /* hw3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hw3.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,8 +126,8 @@
 				B95B930C1B543AC6009D2BCF /* ComposeVideoViewController.m */,
 				B935D64D1B55E00C006B8016 /* ReadTimelineTableViewController.h */,
 				B935D64E1B55E00C006B8016 /* ReadTimelineTableViewController.m */,
-				B935D6531B55EA17006B8016 /* TWFeedCellTableViewCell.h */,
-				B935D6541B55EA17006B8016 /* TWFeedCellTableViewCell.m */,
+				B935D6531B55EA17006B8016 /* TWFeedTableViewCell.h */,
+				B935D6541B55EA17006B8016 /* TWFeedTableViewCell.m */,
 				B96385101B4482AE00A22E9B /* Images.xcassets */,
 				B96385121B4482AE00A22E9B /* LaunchScreen.xib */,
 				B96385001B4482AE00A22E9B /* Supporting Files */,
@@ -269,7 +269,7 @@
 				B95B930D1B543AC6009D2BCF /* ComposeVideoViewController.m in Sources */,
 				E6554E021B49CAA000D22FE1 /* AssestViewController.m in Sources */,
 				E6554E051B4A309700D22FE1 /* PlayerView.m in Sources */,
-				B935D6551B55EA17006B8016 /* TWFeedCellTableViewCell.m in Sources */,
+				B935D6551B55EA17006B8016 /* TWFeedTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,7 +7,7 @@
 //
 
 #import "ReadTimelineTableViewController.h"
-#import "TWFeedCellTableViewCell.h"
+#import "TWFeedTableViewCell.h"
 @import Social;
 @import Accounts;
 static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
@@ -15,6 +15,7 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
 @interface ReadTimelineTableViewController ()
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (nonatomic, strong) NSArray *tweets;
 
 @end
 
@@ -47,15 +48,10 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
                         NSLog(@"Get timeline HTTP Response)%li, %@", (long)[urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
                         if (!error) {
                             NSLog(@"Get timeline succeed!");
-                            NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
-                            
-                            //Filter the preferred data
-                            NSString *screenNameString = [(NSDictionary *)jsonResponse objectForKey:@"screen_name"];
-                            NSString *nameString = [(NSDictionary *)jsonResponse objectForKey:@"name"];
-                            NSString *profileImageURLString = [(NSDictionary *)jsonResponse objectForKey:@"profile_image_url_https"];
-                            NSString *timeString = [(NSDictionary *)jsonResponse objectForKey:@"create_at"];
-                            NSString *textString = [(NSDictionary *)jsonResponse objectForKey:@"text"];
-                            NSString *mediaURLString = [(NSDictionary *)jsonResponse objectForKey:@"media_url"];
+                            id JSONResponse = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
+                            if ([JSONResponse isKindOfClass:[NSArray class]]) {
+                                self.tweets = JSONResponse;
+                            }
                         }
                         else {
                             NSLog(@"Error get timeline - %@", error);
@@ -99,18 +95,21 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return 0;
+    return self.tweets.count;
 }
 
-/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    TWFeedTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NewsFeedCell" forIndexPath:indexPath];
+    
+    // Find tweet
+    NSDictionary *tweetDict = self.tweets[indexPath.row];
     
     // Configure the cell...
+    cell.screenNameLabel.text = tweetDict[@"user"][@"screen_name"];
     
     return cell;
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.
