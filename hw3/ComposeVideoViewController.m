@@ -54,6 +54,57 @@
 }
 
 
+#pragma mark - Buttons
+
+- (void) completion {
+    
+}
+
+- (IBAction)postVideoTweet:(id)sender {
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+        if (granted) {
+            
+            NSArray *accounts = [accountStore accountsWithAccountType:accountType];
+            
+            // Check if the users has setup at least one Twitter account
+            
+            if (accounts.count > 0)
+            {
+                ACAccount *twitterAccount = [accounts objectAtIndex:0];
+
+                NSData *videoData = [NSData dataWithContentsOfFile:self.outputFileURL.path];
+                [self uploadTwitterVideo:videoData account:twitterAccount withCompletion:^{
+                    [self completion];
+                }];
+            } else {
+                NSLog(@"No access granted");
+                UIAlertView *alertView = [[UIAlertView alloc]
+                                          initWithTitle:@"Sorry"
+                                          message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
+                                          delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+                [alertView show];
+
+            }
+        }
+    }];
+}
+
+-(IBAction)cancelToCameraViewController:(id)sender {
+    [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
+}
+
+
+#pragma mark - CameraViewControllDelegate
+-(void)cameraViewControllerDidTweetVideo:(CameraViewController *)controller {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma SendVideoTweeet Method
 
 - (void)uploadTwitterVideo:(NSData*)videoData account:(ACAccount*)account withCompletion:(dispatch_block_t)completion{
     
@@ -87,6 +138,7 @@
     NSURL *twitterPostURL = [[NSURL alloc] initWithString:@"https://upload.twitter.com/1.1/media/upload.json"];
     NSDictionary *postParams = @{@"command": @"APPEND",
                                  @"media_id" : mediaID,
+                                 @"media_data": videoData,
                                  @"segment_index" : @"0",
                                  };
     
@@ -148,81 +200,6 @@
         }
     }];
     
-}
-#pragma mark - Buttons
-//-(IBAction)postButtonDidPushed:(id)sender {
-//    NSURL *resourceURL = [NSURL URLWithString:@"https://upload.twitter.com/1.1/media/upload.json"];
-//    NSDictionary *message = @{@"status" : self.textView.text};
-//    
-//    //Post text
-//    SLRequest *postRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter
-//                                                requestMethod:SLRequestMethodPOST
-//                                                          URL:resourceURL
-//                                                   parameters:message];
-//    //Post
-//    
-//
-//    NSData *data = UIImagePNGRepresentation(imgSelected);
-//    [postRequest addMultipartData:data withName:@"media" type:@"image/png" filename:@"TestImage.png"];
-//
-//    
-//    postRequest.account = account;
-//    
-//    [postRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error)
-//    {
-//        if (!error)
-//        {
-//            NSLog(@"Upload Sucess !");
-//        }
-//    }];
-//}
-
-- (void) completion {
-    
-}
-
-- (IBAction)postVideoTweet:(id)sender {
-    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
-    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
-    
-    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
-        if (granted) {
-            
-            NSArray *accounts = [accountStore accountsWithAccountType:accountType];
-            
-            // Check if the users has setup at least one Twitter account
-            
-            if (accounts.count > 0)
-            {
-                ACAccount *twitterAccount = [accounts objectAtIndex:0];
-
-                NSData *videoData = [NSData dataWithContentsOfFile:self.outputFileURL.path];
-                [self uploadTwitterVideo:videoData account:twitterAccount withCompletion:^{
-                    [self completion];
-                }];
-            } else {
-                NSLog(@"No access granted");
-                UIAlertView *alertView = [[UIAlertView alloc]
-                                          initWithTitle:@"Sorry"
-                                          message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
-                                          delegate:self
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-                [alertView show];
-
-            }
-        }
-    }];
-}
-
--(IBAction)cancelToCameraViewController:(id)sender {
-    [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
-}
-
-
-#pragma mark - CameraViewControllDelegate
--(void)cameraViewControllerDidTweetVideo:(CameraViewController *)controller {
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
