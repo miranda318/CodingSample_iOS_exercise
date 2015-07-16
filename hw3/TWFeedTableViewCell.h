@@ -18,5 +18,6 @@
 @property (nonatomic, weak) IBOutlet UIImageView *userImageView;
 @property (nonatomic, weak) IBOutlet UIImageView *photoImageView;
 @property (nonatomic, weak) IBOutlet PlayerView *playerView;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
 
 @end

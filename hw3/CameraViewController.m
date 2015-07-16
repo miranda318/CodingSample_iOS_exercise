@@ -67,7 +67,15 @@
     
     // Setup capture session
     self.session = [[AVCaptureSession alloc] init];
-    [self.session setSessionPreset:AVCaptureSessionPresetHigh]; // High res, babe!
+    [self.session setSessionPreset:AVCaptureSessionPresetMedium]; // High res, babe!
+
+    if ([self.session canSetSessionPreset:AVCaptureSessionPreset640x480]) {
+        self.session.sessionPreset = AVCaptureSessionPreset640x480;
+    }
+    else {
+        // Handle the failure.
+    }
+    
     
     // Get available camera devices.
     NSArray *availableCameraDevices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
@@ -105,8 +113,13 @@
     // Setup and add preview layer for live camera feed.
     self.previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.session];
     [self.previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [self.previewLayer setFrame:self.view.frame];
+    [self.previewLayer setFrame: CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.width)];
+//    [self.previewLayer setFrame:self.view.frame];
     [self.view.layer insertSublayer:self.previewLayer atIndex:0];
+    
+    // Overwrite UIImageView and PlayView frame size
+//    [self.imageView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.width)];
+//    [self.playerView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.width)];
     
     // Start the capture session.
     [self.session startRunning];
