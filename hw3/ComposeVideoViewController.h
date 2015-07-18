@@ -9,8 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "PlayerView.h"
 #import "CameraViewController.h"
+@import Accounts;
 
 @interface ComposeVideoViewController : UIViewController
 @property (strong, nonatomic) NSURL *outputFileURL;
 @property (strong, nonatomic) NSString *string;
+@property (strong, nonatomic) ACAccount *twitterAccount;
 @end

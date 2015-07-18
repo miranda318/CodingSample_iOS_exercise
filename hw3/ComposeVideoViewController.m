@@ -8,7 +8,6 @@
 
 #import "ComposeVideoViewController.h"
 @import AVFoundation;
-@import Accounts;
 @import Social;
 
 @interface ComposeVideoViewController ()
@@ -16,9 +15,10 @@
 @property (weak, nonatomic) IBOutlet PlayerView *playerView;
 @property (weak, nonatomic) IBOutlet UIButton *postButton;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
-
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
 
 @property (nonatomic, strong) AVCaptureMovieFileOutput *movieFileOutput;
+@property (strong, nonatomic) AVPlayer *player;
 
 @end
 
@@ -31,17 +31,17 @@
     // Do any additional setup after loading the view.
     
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.outputFileURL];
-    AVPlayer *player = [AVPlayer playerWithPlayerItem:playerItem];
-    [self.playerView setPlayer:player];
+    self.player = [AVPlayer playerWithPlayerItem:playerItem];
+    [self.playerView setPlayer:self.player];
 
     [[self.textView layer] setBorderColor:[[UIColor grayColor] CGColor]];
     [[self.textView layer] setBorderWidth:2.3];
     [[self.textView layer] setCornerRadius:15];
-    self.textView.text = self.string;
+    self.textView.text = [NSString stringWithFormat:@"@MobileApp4 %@", self.string];
     
-    [[self.playerView layer] setBorderColor:[[UIColor grayColor] CGColor]];
-    [[self.playerView layer] setBorderWidth:2.3];
-    [[self.playerView layer] setCornerRadius:15];
+//    [[self.playerView layer] setBorderColor:[[UIColor grayColor] CGColor]];
+//    [[self.playerView layer] setBorderWidth:2.3];
+//    [[self.playerView layer] setCornerRadius:15];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -53,6 +53,10 @@
     [self.view endEditing:YES];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    // Reactivate the post button.
+    self.postButton.enabled = YES;
+}
 
 #pragma mark - Buttons
 
@@ -60,7 +64,7 @@
     
 }
 
-- (IBAction)postVideoTweet:(id)sender {
+- (IBAction)postButtonDidPush:(id)sender {
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     
@@ -74,12 +78,15 @@
             if (accounts.count > 0)
             {
                 ACAccount *twitterAccount = [accounts objectAtIndex:0];
-
                 NSData *videoData = [NSData dataWithContentsOfURL:self.outputFileURL];
                 [self uploadTwitterVideo:videoData account:twitterAccount withCompletion:^{
                     [self completion];
                 }];
-            } else {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Twiter" message:@"Sending your tweet..." preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        else {
                 NSLog(@"No access granted");
                 UIAlertView *alertView = [[UIAlertView alloc]
                                           initWithTitle:@"Sorry"
@@ -91,11 +98,19 @@
 
             }
         }
-    }];
+    }
+     ];
+    // In case the post button is hit more than once.
+    self.postButton.enabled = NO;
 }
 
 -(IBAction)cancelToCameraViewController:(id)sender {
     [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
+}
+
+-(IBAction)playButtonDidPush:(id)sender {
+    [self.player play];
+    self.playButton.hidden = YES;
 }
 
 
@@ -185,18 +200,23 @@
     NSURL *twitterPostURL = [[NSURL alloc] initWithString:@"https://api.twitter.com/1.1/statuses/update.json"];
     
     // Set the parameters for the third twitter video request.
-    NSDictionary *postParams = @{@"status": self.string,
+    NSDictionary *postParams = @{@"status": self.textView.text,
                                  @"media_ids" : @[mediaID]};
     
     SLRequest *postRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodPOST URL:twitterPostURL parameters:postParams];
     postRequest.account = account;
     [postRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-        NSLog(@"Stage4 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        //NSLog(@"Stage 4 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (error) {
             NSLog(@"Error stage 4 - %@", error);
         } else {
             if ([urlResponse statusCode] == 200){
                 NSLog(@"upload success !");
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Twitter" message:@"Your tweet is sent!" preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
+                    [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
+                }]];
+                [self presentViewController:alert animated:YES completion:nil];
             }
         }
     }];

@@ -44,6 +44,7 @@
 @property (nonatomic, strong) NSURL *outputFileURL;
 @property (nonatomic, strong) NSData *videoData;
 @property (nonatomic, strong) NSString *textString;
+@property (nonatomic, strong) ACAccount *twitterAccount;
 @property BOOL isImage;
 @property UIBackgroundTaskIdentifier backgroundRecordingID;
 
@@ -67,7 +68,7 @@
     
     // Setup capture session
     self.session = [[AVCaptureSession alloc] init];
-    [self.session setSessionPreset:AVCaptureSessionPresetMedium]; // High res, babe!
+    [self.session setSessionPreset:AVCaptureSessionPresetMedium]; // Medium res, due to post video. Damn.
 
     if ([self.session canSetSessionPreset:AVCaptureSessionPreset640x480]) {
         self.session.sessionPreset = AVCaptureSessionPreset640x480;
@@ -292,7 +293,7 @@
     NSLog(@"%@",[self getBasicInfo]);
     
     self.isImage = NO;
-    
+
     [self videoPreviewMode];
 }
 
@@ -359,12 +360,13 @@
     [self.session startRunning]; // Re-start capture session.
 }
 
-- (IBAction)tweetTapped:(id)sender {
-    //[_posting startAnimating];
+- (IBAction)tweetTapped:(id)sender {    
+    NSString *message = [NSString stringWithFormat:@"@MobileApp4 %@", [self getBasicInfo]];
+
     if (self.isImage){
         if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
             SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-            [tweetSheet  setInitialText:[self getBasicInfo]];
+            [tweetSheet  setInitialText:message];
             [tweetSheet addImage:self.image];
             [self presentViewController:tweetSheet animated:YES completion:nil];
             
@@ -378,7 +380,36 @@
             [alertView show];
         }
     } else {
-        [self performSegueWithIdentifier:@"CustomSegueToComposeView" sender:nil];
+        
+//        ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+//        ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+//        
+//        [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+//            if (granted) {
+//                
+//                NSArray *accounts = [accountStore accountsWithAccountType:accountType];
+//                
+//                // Check if the users has setup at least one Twitter account
+//                
+//                if (accounts.count > 0)
+//                {
+//                    self.twitterAccount = [accounts objectAtIndex:0];
+//                    
+                    [self performSegueWithIdentifier:@"CustomSegueToComposeView" sender:nil];
+//                }
+//                else {
+//                    NSLog(@"No access granted");
+//                    UIAlertView *alertView = [[UIAlertView alloc]
+//                                              initWithTitle:@"Sorry"
+//                                              message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
+//                                              delegate:self
+//                                              cancelButtonTitle:@"OK"
+//                                              otherButtonTitles:nil];
+//                    [alertView show];
+//                    
+//                }
+//            }
+//        }];
     }
 }
 
@@ -424,6 +455,7 @@
         
         destinationController.outputFileURL = self.outputFileURL;
         destinationController.string = [self getBasicInfo];
+//        destinationController.twitterAccount = self.twitterAccount;
     }
 }
 

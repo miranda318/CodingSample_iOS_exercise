@@ -53,20 +53,17 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
             {
                 ACAccount *twitterAccount = [accounts objectAtIndex:0];
                 NSURL *twitterGetURL = [[NSURL alloc] initWithString:@"https://api.twitter.com/1.1/statuses/user_timeline.json"];
-                NSDictionary *getParams = @{@"user_id": @"yingyiy",
-                                            @"exclude_replies":@"true",
-                                            };
+                NSDictionary *getParams = @{@"user_id": @"yingyiy"};
                 SLRequest *getRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodGET URL:twitterGetURL parameters:getParams];
                 getRequest.account = twitterAccount;
                 
                 [getRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-                        //NSLog(@"Get timeline HTTP Response)%li, %@", (long)[urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
                         if (!error) {
                             NSLog(@"Get timeline succeed!");
                             id JSONResponse = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
                             if ([JSONResponse isKindOfClass:[NSArray class]]) {
                                 self.tweets = JSONResponse;
-                                //NSLog(@"%@", self.tweets[2]);
+                                NSLog(@"%@", self.tweets[0]);
                                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                                     [self.tableView reloadData];
                                 }];
