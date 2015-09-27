@@ -5,6 +5,7 @@
 //  Created by Yingyi Yang on 7/12/15.
 //  Copyright (c) 2015 Yingyi Yang. All rights reserved.
 //
+//  This tabs allows users to take a picture or vedio using front/back camera. After taking the picture/video, they can also tweet it using the first Twitter account in the account store.
 
 #import "ComposeVideoViewController.h"
 @import AVFoundation;
@@ -17,8 +18,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 
+@property (nonatomic, strong) UIView *loadingView;
 @property (nonatomic, strong) AVCaptureMovieFileOutput *movieFileOutput;
-@property (strong, nonatomic) AVPlayer *player;
+@property (nonatomic, strong) AVPlayer *player;
 
 @end
 
@@ -39,9 +41,6 @@
     [[self.textView layer] setCornerRadius:15];
     self.textView.text = [NSString stringWithFormat:@"@MobileApp4 %@", self.string];
     
-//    [[self.playerView layer] setBorderColor:[[UIColor grayColor] CGColor]];
-//    [[self.playerView layer] setBorderWidth:2.3];
-//    [[self.playerView layer] setCornerRadius:15];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -58,53 +57,81 @@
     self.postButton.enabled = YES;
 }
 
-#pragma mark - Buttons
+#pragma Helper methods
+
+- (void)removeTempVideoFileWithURL:(NSURL *)fileURL {
+    UIBackgroundTaskIdentifier currentBackgroundRecordingID = self.backgroundRecordingID;
+    self.backgroundRecordingID = UIBackgroundTaskInvalid;
+    [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+    if ( currentBackgroundRecordingID != UIBackgroundTaskInvalid ) {
+        [[UIApplication sharedApplication] endBackgroundTask:currentBackgroundRecordingID];
+    }
+    NSLog(@"Output file URL is removed.");
+
+}
+
 
 - (void) completion {
     
 }
 
-- (IBAction)postButtonDidPush:(id)sender {
-    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
-    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
-    
-    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
-        if (granted) {
-            
-            NSArray *accounts = [accountStore accountsWithAccountType:accountType];
-            
-            // Check if the users has setup at least one Twitter account
-            
-            if (accounts.count > 0)
-            {
-                ACAccount *twitterAccount = [accounts objectAtIndex:0];
-                NSData *videoData = [NSData dataWithContentsOfURL:self.outputFileURL];
-                [self uploadTwitterVideo:videoData account:twitterAccount withCompletion:^{
-                    [self completion];
-                }];
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Twiter" message:@"Sending your tweet..." preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
-                [self presentViewController:alert animated:YES completion:nil];
-            }
-        else {
-                NSLog(@"No access granted");
-                UIAlertView *alertView = [[UIAlertView alloc]
-                                          initWithTitle:@"Sorry"
-                                          message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
-                                          delegate:self
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-                [alertView show];
+#pragma mark - Buttons
 
-            }
-        }
+- (IBAction)postButtonDidPush:(id)sender {
+    NSData *videoData = [NSData dataWithContentsOfURL:self.outputFileURL];
+    [self uploadTwitterVideo:videoData account:self.twitterAccount withCompletion:^{
+        [self completion];
+    }];
+    
+    if (!self.loadingView) {
+        // Init loading view
+        self.loadingView = [[UIView alloc] init];
+        self.loadingView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.loadingView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
+        [self.view addSubview:self.loadingView];
+        // Add loading view auto layout constraints
+        NSArray *loadingViewHorizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[loadingView]|"
+                                                                                            options:0
+                                                                                            metrics:nil
+                                                                                              views:@{@"loadingView": self.loadingView}];
+        NSArray *loadingViewVerticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[loadingView]|"
+                                                                                          options:0
+                                                                                          metrics:nil
+                                                                                            views:@{@"loadingView": self.loadingView}];
+        [NSLayoutConstraint activateConstraints:loadingViewHorizontalConstraints];
+        [NSLayoutConstraint activateConstraints:loadingViewVerticalConstraints];
+        
+        // Init activity indicator
+        UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        spinner.translatesAutoresizingMaskIntoConstraints = NO;
+        [spinner startAnimating];
+        [self.loadingView addSubview:spinner];
+        // Add spinner auto layout constraints
+        NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:spinner
+                                                                             attribute:NSLayoutAttributeCenterX
+                                                                             relatedBy:NSLayoutRelationEqual
+                                                                                toItem:self.loadingView
+                                                                             attribute:NSLayoutAttributeCenterX
+                                                                            multiplier:1
+                                                                              constant:0];
+        centerXConstraint.active = YES;
+        NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:spinner
+                                                                             attribute:NSLayoutAttributeCenterY
+                                                                             relatedBy:NSLayoutRelationEqual
+                                                                                toItem:self.loadingView
+                                                                             attribute:NSLayoutAttributeCenterY
+                                                                            multiplier:1
+                                                                              constant:0];
+        centerYConstraint.active = YES;
     }
-     ];
+    self.loadingView.hidden = NO;
+    
     // In case the post button is hit more than once.
     self.postButton.enabled = NO;
 }
 
 -(IBAction)cancelToCameraViewController:(id)sender {
+    [self removeTempVideoFileWithURL:self.outputFileURL];
     [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
 }
 
@@ -136,6 +163,17 @@
         NSLog(@"Stage 1 HTTP Response: %td, responseData: %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (error) {
             NSLog(@"There was an error:%@", [error localizedDescription]);
+            // Hide spinner
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                self.loadingView.hidden = NO;
+            }];
+            
+            // Show error alert
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Video upload errors in stage 1." preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Back" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
+                [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
+            }]];
+            [self presentViewController:alert animated:YES completion:nil];
         } else {
             NSMutableDictionary *returnedData = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
             
@@ -169,6 +207,17 @@
         }
         else {
             NSLog(@"Error stage 2 - %@", error);
+            // Hide spinner
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                self.loadingView.hidden = NO;
+            }];
+            
+            // Show error alert
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Video upload errors in stage 2." preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Back" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
+                [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
+            }]];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     }];
 }
@@ -188,6 +237,18 @@
         NSLog(@"Stage3 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
         if (error) {
             NSLog(@"Error stage 3 - %@", error);
+            // Hide spinner
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                self.loadingView.hidden = NO;
+            }];
+            
+            // Show error alert
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Video upload errors in stage 3." preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Back" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
+                [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];
+            }]];
+            [self presentViewController:alert animated:YES completion:nil];
+            
         } else {
             [self tweetVideoStage4:videoData mediaID:mediaID account:account withCompletion:completion];
             NSLog(@"Stage 3 succeed.");
@@ -206,12 +267,19 @@
     SLRequest *postRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodPOST URL:twitterPostURL parameters:postParams];
     postRequest.account = account;
     [postRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-        //NSLog(@"Stage 4 HTTP Response: %td, %@", [urlResponse statusCode], [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+        // Hide spinner
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            self.loadingView.hidden = NO;
+        }];
         if (error) {
             NSLog(@"Error stage 4 - %@", error);
         } else {
             if ([urlResponse statusCode] == 200){
                 NSLog(@"upload success !");
+                // Remove output file url
+                [self removeTempVideoFileWithURL:self.outputFileURL];
+                
+                // Show success alert
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Twitter" message:@"Your tweet is sent!" preferredStyle:UIAlertControllerStyleAlert];
                 [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
                     [self performSegueWithIdentifier:@"UnwindToCameraViewController" sender:self];

@@ -5,6 +5,7 @@
 //  Created by Yingyi Yang on 7/1/15.
 //  Copyright (c) 2015 Yingyi Yang. All rights reserved.
 //
+//  This tab gives a user the access of all his/her pictures and video in camera roll. 
 
 #import "UniversialPlayerTableViewController.h"
 #import "AssestViewController.h"

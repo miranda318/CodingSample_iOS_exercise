@@ -5,6 +5,7 @@
 //  Created by Yingyi Yang on 7/8/15.
 //  Copyright (c) 2015 Yingyi Yang. All rights reserved.
 //
+//  This tabs allows users to take a picture or vedio using front/back camera. After taking the picture/video, they can also tweet it using the first Twitter account in the account store.
 
 #import "CameraViewController.h"
 #import "PlayerView.h"
@@ -269,6 +270,11 @@
 }
 
 - (IBAction)videoStartButtonDidPushed:(id)sender {
+    // If there is still unsaved outputfileURL
+    if (self.outputFileURL) {
+        [self removeTempVideoFileWithURL:self.outputFileURL];
+    }
+    
     [self.captureSessionQueue addOperationWithBlock:^{
         if ( [UIDevice currentDevice].isMultitaskingSupported ) {
             self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
@@ -316,6 +322,7 @@
         }];
         [self cameraMode];
     } else {
+        [self removeTempVideoFileWithURL:self.outputFileURL];
         [UIView animateWithDuration:0.5 animations:^{
             self.playerView.alpha = 0;
         }];
@@ -371,45 +378,43 @@
             [self presentViewController:tweetSheet animated:YES completion:nil];
             
         } else {
-            UIAlertView *alertView = [[UIAlertView alloc]
-                                      initWithTitle:@"Sorry"
-                                      message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
-                                      delegate:self
-                                      cancelButtonTitle:@"OK"
-                                      otherButtonTitles:nil];
-            [alertView show];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Sorry"
+                                                                           message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Don't Allow" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
+            }]];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     } else {
         
-//        ACAccountStore *accountStore = [[ACAccountStore alloc] init];
-//        ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
-//        
-//        [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
-//            if (granted) {
-//                
-//                NSArray *accounts = [accountStore accountsWithAccountType:accountType];
-//                
-//                // Check if the users has setup at least one Twitter account
-//                
-//                if (accounts.count > 0)
-//                {
-//                    self.twitterAccount = [accounts objectAtIndex:0];
-//                    
-                    [self performSegueWithIdentifier:@"CustomSegueToComposeView" sender:nil];
-//                }
-//                else {
-//                    NSLog(@"No access granted");
-//                    UIAlertView *alertView = [[UIAlertView alloc]
-//                                              initWithTitle:@"Sorry"
-//                                              message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
-//                                              delegate:self
-//                                              cancelButtonTitle:@"OK"
-//                                              otherButtonTitles:nil];
-//                    [alertView show];
-//                    
-//                }
-//            }
-//        }];
+        ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+        ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+        
+        [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+            if (granted) {
+                
+                NSArray *accounts = [accountStore accountsWithAccountType:accountType];
+                
+                // Check if the users has setup at least one Twitter account
+                
+                if (accounts.count > 0)
+                {
+                    self.twitterAccount = [accounts objectAtIndex:0];
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                        [self performSegueWithIdentifier:@"CustomSegueToComposeView" sender:nil];
+                    }];
+                }
+                else {
+                    NSLog(@"No access granted");
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Sorry"
+                                                                                   message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
+                                                                            preferredStyle:UIAlertControllerStyleAlert];
+                    [alert addAction:[UIAlertAction actionWithTitle:@"Don't Allow" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
+                    }]];
+                    [self presentViewController:alert animated:YES completion:nil];
+                }
+            }
+        }];
     }
 }
 
@@ -446,6 +451,7 @@
     if ( currentBackgroundRecordingID != UIBackgroundTaskInvalid ) {
         [[UIApplication sharedApplication] endBackgroundTask:currentBackgroundRecordingID];
     }
+    NSLog(@"Output file URL is removed.");
 }
 
 #pragma mark Navigation
@@ -455,7 +461,8 @@
         
         destinationController.outputFileURL = self.outputFileURL;
         destinationController.string = [self getBasicInfo];
-//        destinationController.twitterAccount = self.twitterAccount;
+        destinationController.twitterAccount = self.twitterAccount;
+        destinationController.backgroundRecordingID = self.backgroundRecordingID;
     }
 }
 

@@ -15,4 +15,5 @@
 @property (strong, nonatomic) NSURL *outputFileURL;
 @property (strong, nonatomic) NSString *string;
 @property (strong, nonatomic) ACAccount *twitterAccount;
+@property UIBackgroundTaskIdentifier backgroundRecordingID;
 @end

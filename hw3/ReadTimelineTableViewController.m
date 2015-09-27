@@ -5,9 +5,11 @@
 //  Created by Yingyi Yang on 7/14/15.
 //  Copyright (c) 2015 Yingyi Yang. All rights reserved.
 //
+//  This tab displays tweets from the user (the first Twitter account in account store). If a tweet comes with a video, user can play this video in AVKit view controller in the next level. 
 
 #import "ReadTimelineTableViewController.h"
 #import "TWFeedTableViewCell.h"
+#import "AVKitViewController.h"
 @import Social;
 @import Accounts;
 static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
@@ -18,6 +20,7 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
 @property (nonatomic, strong) NSArray *tweets;
 @property NSOperationQueue *imageLoadingQueue;
 @property (nonatomic, strong) NSString *mediaType;
+@property (nonatomic, strong) NSURL *mediaURL;
 
 @end
 
@@ -39,7 +42,6 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
     self.imageLoadingQueue = [[NSOperationQueue alloc] init];
     self.imageLoadingQueue.maxConcurrentOperationCount = 4;
     self.imageLoadingQueue.name = @"imageLoadingQueue";
-    
     
     
     [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
@@ -77,14 +79,12 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
                 
             } else {
                 NSLog(@"No access granted");
-                UIAlertView *alertView = [[UIAlertView alloc]
-                                          initWithTitle:@"Sorry"
-                                          message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
-                                          delegate:self
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-                [alertView show];
-                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Sorry"
+                                                                               message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Don't Allow" style:UIAlertActionStyleCancel handler:^(UIAlertAction *backToCameraViewController) {
+                }]];
+                [self presentViewController:alert animated:YES completion:nil];
             }
         }
     }];
@@ -125,7 +125,7 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TWFeedTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NewsFeedCell"];
-    // Hide play button first.
+     // Hide play button first.
     cell.playButton.hidden = YES;
     
     // Find tweet
@@ -195,14 +195,13 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
             //News feed image
             if (tweetDict[@"extended_entities"]) {
                 NSArray *mediaArray = tweetDict[@"extended_entities"][@"media"];
-                NSDictionary *mediaDic = mediaArray[0];
+                NSDictionary *mediaDic = [mediaArray firstObject];
                 NSString *feedImageURLString = mediaDic[@"media_url"];
-                self.mediaType = mediaDic[@"type"];
                 cell.photoImageView.image = [self convertURLStringToImage:feedImageURLString];
                 
-                if ([self.mediaType isEqualToString:@"photo"]) {
+                if ([mediaDic[@"type"] isEqualToString:@"photo"]) {
                     cell.playButton.hidden = YES;
-                } else if ([self.mediaType isEqualToString:@"video"]) {
+                } else if ([mediaDic[@"type"] isEqualToString:@"video"]) {
                     cell.playButton.hidden = NO;
                 } else {
                     NSLog(@"Unknow media type in Read Timeline Table View Controller.");
@@ -223,49 +222,37 @@ static NSString * const newsFeedCellIdentifier = @"NewsFeedCell";
     return cell;
 }
 
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Find tweet
+    NSDictionary *tweetDict = self.tweets[indexPath.row];
+    NSArray *mediaArray = tweetDict[@"extended_entities"][@"media"];
+    NSDictionary *mediaDic = [mediaArray firstObject];
+    if ([mediaDic[@"type"] isEqualToString:@"video"]) {
+        [self performSegueWithIdentifier:@"playVideo" sender:nil];
+    }
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
 #pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+    // Find tweet
+    NSDictionary *tweetDict = self.tweets[indexPath.row];
+    NSArray *mediaArray = tweetDict[@"extended_entities"][@"media"];
+    NSDictionary *mediaDic = [mediaArray firstObject];
+    if ([[segue identifier] isEqualToString:@"playVideo"]) {
+        AVKitViewController *viewController = segue.destinationViewController;
+        //Setup layer view controller for movie.
+        if (mediaDic[@"media_url"] != nil && [mediaDic[@"type"] isEqualToString:@"video"]) {
+            NSArray *variants = mediaDic[@"video_info"][@"variants"];
+            for (NSDictionary *oneVariant in variants) {
+                if ([oneVariant[@"content_type"] isEqualToString:@"video/mp4"] && [oneVariant[@"bitrate"] integerValue] == 832000) {
+                    viewController.mediaURL = [NSURL URLWithString:oneVariant[@"url"]];
+                    break;
+                }
+            }
+        }
+    }
 }
-*/
 
 @end

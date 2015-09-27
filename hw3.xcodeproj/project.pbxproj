@@ -18,6 +18,8 @@
 		B96385201B4482AE00A22E9B /* hw3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = B963851F1B4482AE00A22E9B /* hw3Tests.m */; };
 		B963852B1B44927B00A22E9B /* UniversialPlayerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B963852A1B44927B00A22E9B /* UniversialPlayerTableViewController.m */; };
 		B9A692911B4DB5BA00A3D654 /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9A692901B4DB5BA00A3D654 /* CameraViewController.m */; };
+		E60CD24D1BB75F7800BD3DD6 /* AVKitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E60CD24C1BB75F7800BD3DD6 /* AVKitViewController.m */; settings = {ASSET_TAGS = (); }; };
+		E60CD24F1BB7639F00BD3DD6 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60CD24E1BB7639F00BD3DD6 /* AVKit.framework */; };
 		E63866EC1B50D0BD0042D130 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E63866EB1B50D0BD0042D130 /* Social.framework */; };
 		E63866EE1B50D0D10042D130 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E63866ED1B50D0D10042D130 /* Accounts.framework */; };
 		E63866F01B50D0DC0042D130 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E63866EF1B50D0DC0042D130 /* QuartzCore.framework */; };
@@ -57,6 +59,9 @@
 		B963852A1B44927B00A22E9B /* UniversialPlayerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UniversialPlayerTableViewController.m; sourceTree = "<group>"; };
 		B9A6928F1B4DB5BA00A3D654 /* CameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraViewController.h; sourceTree = "<group>"; };
 		B9A692901B4DB5BA00A3D654 /* CameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraViewController.m; sourceTree = "<group>"; };
+		E60CD24B1BB75F7800BD3DD6 /* AVKitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVKitViewController.h; sourceTree = "<group>"; };
+		E60CD24C1BB75F7800BD3DD6 /* AVKitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVKitViewController.m; sourceTree = "<group>"; };
+		E60CD24E1BB7639F00BD3DD6 /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		E63866EB1B50D0BD0042D130 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		E63866ED1B50D0D10042D130 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E63866EF1B50D0DC0042D130 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -71,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E60CD24F1BB7639F00BD3DD6 /* AVKit.framework in Frameworks */,
 				E63866F01B50D0DC0042D130 /* QuartzCore.framework in Frameworks */,
 				E63866EE1B50D0D10042D130 /* Accounts.framework in Frameworks */,
 				E63866EC1B50D0BD0042D130 /* Social.framework in Frameworks */,
@@ -90,6 +96,7 @@
 		B96384F41B4482AD00A22E9B = {
 			isa = PBXGroup;
 			children = (
+				E60CD24E1BB7639F00BD3DD6 /* AVKit.framework */,
 				E63866EF1B50D0DC0042D130 /* QuartzCore.framework */,
 				E63866ED1B50D0D10042D130 /* Accounts.framework */,
 				E63866EB1B50D0BD0042D130 /* Social.framework */,
@@ -128,6 +135,8 @@
 				B935D64E1B55E00C006B8016 /* ReadTimelineTableViewController.m */,
 				B935D6531B55EA17006B8016 /* TWFeedTableViewCell.h */,
 				B935D6541B55EA17006B8016 /* TWFeedTableViewCell.m */,
+				E60CD24B1BB75F7800BD3DD6 /* AVKitViewController.h */,
+				E60CD24C1BB75F7800BD3DD6 /* AVKitViewController.m */,
 				B96385101B4482AE00A22E9B /* Images.xcassets */,
 				B96385121B4482AE00A22E9B /* LaunchScreen.xib */,
 				B96385001B4482AE00A22E9B /* Supporting Files */,
@@ -205,7 +214,7 @@
 		B96384F51B4482AD00A22E9B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Yingyi Yang";
 				TargetAttributes = {
 					B96384FC1B4482AD00A22E9B = {
@@ -267,6 +276,7 @@
 				B96385031B4482AE00A22E9B /* main.m in Sources */,
 				B9A692911B4DB5BA00A3D654 /* CameraViewController.m in Sources */,
 				B95B930D1B543AC6009D2BCF /* ComposeVideoViewController.m in Sources */,
+				E60CD24D1BB75F7800BD3DD6 /* AVKitViewController.m in Sources */,
 				E6554E021B49CAA000D22FE1 /* AssestViewController.m in Sources */,
 				E6554E051B4A309700D22FE1 /* PlayerView.m in Sources */,
 				B935D6551B55EA17006B8016 /* TWFeedTableViewCell.m in Sources */,
@@ -332,6 +342,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -399,7 +410,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = hw3/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "CMU.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -410,7 +421,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = hw3/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "CMU.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -419,16 +430,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = hw3Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "CMU.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/hw3.app/hw3";
 			};
@@ -438,12 +445,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
 				INFOPLIST_FILE = hw3Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "CMU.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/hw3.app/hw3";
 			};
